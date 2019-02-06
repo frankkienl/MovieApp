@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:id="@+id/movie_list_item_poster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/no_poster"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/movie_poster"/>
+
+        <LinearLayout
+                android:layout_alignParentBottom="true"
+                android:padding="16dp"
+                android:background="@color/transparentBlack"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    style="@style/MovieListItemTitle"
+                    android:text="@string/title"
+                    android:id="@+id/movie_list_item_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+
+            <TextView
+                    style="@style/MovieListItemTitle"
+                    android:text="@string/year"
+                    android:id="@+id/movie_list_item_year"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+        </LinearLayout>
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>
