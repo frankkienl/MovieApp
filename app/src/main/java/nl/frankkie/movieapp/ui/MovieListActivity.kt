@@ -18,12 +18,14 @@ import nl.frankkie.movieapp.model.Movie
 
 class MovieListActivity : AppCompatActivity() {
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initUI()
     }
 
-    fun initUI() {
+    private fun initUI() {
         setContentView(R.layout.activity_movie_list)
 
         val movieList = findViewById<RecyclerView>(R.id.movie_list)
@@ -34,6 +36,13 @@ class MovieListActivity : AppCompatActivity() {
         recyclerView.adapter = SimpleItemRecyclerViewAdapter(Movie.ITEMS)
         val layoutManager = GridLayoutManager(this, calculateNoOfColumns(this))
         recyclerView.layoutManager = layoutManager
+
+        //Show a loading spinner when the list is empty
+        if (recyclerView.adapter?.itemCount == 0){
+            findViewById<View>(R.id.movie_list_empty).visibility = View.VISIBLE
+        } else {
+            findViewById<View>(R.id.movie_list_empty).visibility = View.GONE
+        }
     }
 
     private fun calculateNoOfColumns(context: Context): Int {

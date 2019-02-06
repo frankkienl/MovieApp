@@ -8,14 +8,27 @@
         android:orientation="vertical"
         tools:context=".ui.MovieListActivity">
 
-    <FrameLayout
+    <RelativeLayout
             android:id="@+id/frameLayout"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="0dp">
 
-        <include layout="@layout/movie_list"/>
-    </FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/movie_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                tools:context=".ui.MovieListActivity"
+                tools:listitem="@layout/movie_list_item"/>
+        <ProgressBar
+                android:id="@+id/movie_list_empty"
+                android:visibility="gone"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+    </RelativeLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/navigation"
