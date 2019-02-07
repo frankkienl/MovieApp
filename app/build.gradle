@@ -44,9 +44,15 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.0.0-beta01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
     implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
+
+    //Room
+    implementation "androidx.room:room-runtime:2.1.0-alpha04"
+    annotationProcessor "androidx.room:room-compiler:2.1.0-alpha04" // For Kotlin use kapt instead of annotationProcessor
+
     //Test
     implementation 'com.jakewharton.espresso:okhttp3-idling-resource:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    testImplementation "androidx.room:room-testing:2.1.0-alpha04"
 }

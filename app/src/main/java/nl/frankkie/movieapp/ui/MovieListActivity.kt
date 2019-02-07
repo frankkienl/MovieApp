@@ -10,15 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import nl.frankkie.movieapp.R
+import nl.frankkie.movieapp.room.Movie
 
-import nl.frankkie.movieapp.model.Movie
+import nl.frankkie.movieapp.room.MovieRepository
 
 
 class MovieListActivity : AppCompatActivity() {
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +33,13 @@ class MovieListActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(Movie.ITEMS)
+        val movies = MovieRepository.getNowPlaying(applicationContext);
+        recyclerView.adapter = MovieRecyclerViewAdapter(movies)
         val layoutManager = GridLayoutManager(this, calculateNoOfColumns(this))
         recyclerView.layoutManager = layoutManager
 
         //Show a loading spinner when the list is empty
-        if (recyclerView.adapter?.itemCount == 0){
+        if (recyclerView.adapter?.itemCount == 0) {
             findViewById<View>(R.id.movie_list_empty).visibility = View.VISIBLE
         } else {
             findViewById<View>(R.id.movie_list_empty).visibility = View.GONE
@@ -52,16 +53,16 @@ class MovieListActivity : AppCompatActivity() {
         return (dpWidth / 180).toInt()
     }
 
-    class SimpleItemRecyclerViewAdapter(
-        private val values: List<Movie.DummyItem>
+    class MovieRecyclerViewAdapter(
+        private val liveData: LiveData<List<Movie>>
     ) :
-        RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
+        RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder>() {
 
         private val onClickListener: View.OnClickListener
 
         init {
             onClickListener = View.OnClickListener { v ->
-                val item = v.tag as Movie.DummyItem
+                val item = v.tag as Movie
 
                 val intent = Intent(v.context, MovieDetailActivity::class.java).apply {
                     putExtra(MovieDetailFragment.ARG_ITEM_ID, item.id)
@@ -78,9 +79,15 @@ class MovieListActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = values[position]
-            holder.title.text = item.id
-            holder.year.text = item.content
+            if (liveData.value == null || liveData.value!!.isEmpty()){
+                return
+            }
+            val item = liveData.value!![position]
+            holder.title.text = item.title
+            holder.year.text = item.release_date
+
+            val imageUrl = item.poster_path;
+            //holder.poster
 
             with(holder.itemView) {
                 tag = item
@@ -88,7 +95,12 @@ class MovieListActivity : AppCompatActivity() {
             }
         }
 
-        override fun getItemCount() = values.size
+        override fun getItemCount() : Int {
+            if (liveData.value == null){
+                return 0
+            }
+            return liveData.value!!.size
+        }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val poster: ImageView = view.findViewById(R.id.movie_list_item_poster)

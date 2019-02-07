@@ -1,4 +1,4 @@
-package nl.frankkie.movieapp.model
+package nl.frankkie.movieapp.model.dummy
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -24,7 +24,11 @@ object Movie {
     }
 
     private fun createDummyItem(position: Int): DummyItem {
-        return DummyItem(position.toString(), "Movie $position", makeDetails(position))
+        return DummyItem(
+            position.toString(),
+            "Movie $position",
+            makeDetails(position)
+        )
     }
 
     private fun makeDetails(position: Int): String {
