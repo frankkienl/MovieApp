@@ -16,6 +16,7 @@ import java.util.Scanner;
 
 public class Config {
     public static final String BASE_URL = "https://api.themoviedb.org/";
+    public static final String BASE_URL_IMAGES = "https://image.tmdb.org/t/p/";
 
     private static MovieRestService restService;
     private static OkHttpClient httpClient;
@@ -63,7 +64,7 @@ public class Config {
         return restService;
     }
 
-    private static OkHttpClient getHttpClient() {
+    public static OkHttpClient getHttpClient() {
         if (httpClient == null) {
             synchronized (Config.class) {
                 //prevent race-condition for singleton-creation

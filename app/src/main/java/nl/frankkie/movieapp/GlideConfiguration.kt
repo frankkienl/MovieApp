@@ -13,7 +13,7 @@ import java.io.InputStream
 class GlideConfiguration : AppGlideModule() {
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         super.registerComponents(context, glide, registry)
-        //val okHttpClient = Config.getHttpClient()
-        //registry.replace(GlideUrl::class.java, InputStream::class.java, OkHttpUrlLoader.Factory(okHttpClient))
+        val okHttpClient = Config.getHttpClient()
+        registry.replace(GlideUrl::class.java, InputStream::class.java, OkHttpUrlLoader.Factory(okHttpClient))
     }
 }
