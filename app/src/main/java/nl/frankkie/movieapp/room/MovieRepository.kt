@@ -44,7 +44,7 @@ object MovieRepository {
         prepareRestClient(context)
 
         //Request from API, put in Database, let LiveData pick it up
-        restService!!.movie(apiKey, id)
+        restService!!.movie(id, apiKey)
             .enqueue(object : Callback<MovieExtended> {
                 override fun onResponse(call: Call<MovieExtended>, response: Response<MovieExtended>) {
                     if (response.isSuccessful) {

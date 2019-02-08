@@ -22,9 +22,9 @@ class MovieDetailActivity : AppCompatActivity() {
             // using a fragment transaction.
             val fragment = MovieDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putString(
+                    putInt(
                         MovieDetailFragment.ARG_ITEM_ID,
-                        intent.getStringExtra(MovieDetailFragment.ARG_ITEM_ID)
+                        intent.getIntExtra(MovieDetailFragment.ARG_ITEM_ID,0)
                     )
                 }
             }

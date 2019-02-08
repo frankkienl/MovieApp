@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.movie_detail.view.*
 import nl.frankkie.movieapp.R
+import nl.frankkie.movieapp.databinding.MovieDetailBinding
 import nl.frankkie.movieapp.model.MovieExtended
 import nl.frankkie.movieapp.model.viewmodel.MovieExtendedViewModel
 import nl.frankkie.movieapp.room.MovieRepository
@@ -53,7 +55,7 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
         }
     }
 
-    private fun movieExtendedUpdated(movieExtended: MovieExtended) {
+    private fun movieExtendedUpdated(movieExtended: MovieExtended?) {
         item = movieExtended
 
         //refresh ui
@@ -64,8 +66,16 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.movie_detail, container, false)
+        //val rootView = inflater.inflate(R.layout.movie_detail, container, false)
 
+        val binding = MovieDetailBinding.inflate(inflater)
+//        val binding = DataBindingUtil.inflate<>(
+//            inflater,
+//            R.layout.movie_detail,
+//            container,
+//            false)
+
+        val rootView = binding.root
         //Fill ui
         fillUI(rootView)
 

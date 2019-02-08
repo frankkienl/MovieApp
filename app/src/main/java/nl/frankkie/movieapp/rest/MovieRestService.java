@@ -18,5 +18,5 @@ public interface MovieRestService {
     Call<MoviesResponse> nowPlaying(@Query("api_key") String apiKey, @Query("primary_release_date.gte") String dateWeekAgo, @Query("primary_release_date.lte") String dateNow);
 
     @GET("/3/movie/{id}")
-    Call<MovieExtended> movie(@Query("api_key") String apiKey, @Path("id") int id);
+    Call<MovieExtended> movie(@Path("id") int id, @Query("api_key") String apiKey);
 }

@@ -14,7 +14,7 @@ public interface MovieExtendedDao {
     @Query("SELECT * FROM MovieExtended")
     LiveData<List<MovieExtended>> getMovies();
 
-    @Query("SELECT * FROM movie WHERE id = :id")
+    @Query("SELECT * FROM MovieExtended WHERE id = :id")
     LiveData<MovieExtended> getMovie(int id);
 
     @Insert

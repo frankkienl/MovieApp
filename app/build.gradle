@@ -5,6 +5,9 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
+    dataBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId "nl.frankkie.movieapp"
         minSdkVersion 19
@@ -23,13 +26,16 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.1.0-alpha04'
+
     //REST
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+
     //Images
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
@@ -37,6 +43,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:annotations:4.8.0'
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
     kapt 'androidx.annotation:annotation:1.0.1'
+
     //Support libs
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
@@ -44,15 +51,10 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0-alpha01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha02'
-//    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-//    implementation 'com.google.android.material:material:1.0.0-beta01'
-//    implementation 'androidx.vectordrawable:vectordrawable:1.0.0-beta01'
-//    implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
-//    implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
 
     //Room
     implementation "androidx.room:room-runtime:2.1.0-alpha04"
-    kapt "androidx.room:room-compiler:2.1.0-alpha04" // For Kotlin use kapt instead of annotationProcessor
+    kapt "androidx.room:room-compiler:2.1.0-alpha04"
 
     //Test
     implementation 'com.jakewharton.espresso:okhttp3-idling-resource:1.0.0'
