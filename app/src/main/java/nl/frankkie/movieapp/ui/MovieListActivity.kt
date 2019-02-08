@@ -33,7 +33,7 @@ class MovieListActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        val movies = MovieRepository.getNowPlaying(applicationContext);
+        val movies = MovieRepository.getNowPlaying(applicationContext)
         recyclerView.adapter = MovieRecyclerViewAdapter(movies)
         val layoutManager = GridLayoutManager(this, calculateNoOfColumns(this))
         recyclerView.layoutManager = layoutManager
@@ -70,6 +70,10 @@ class MovieListActivity : AppCompatActivity() {
                 v.context.startActivity(intent)
 
             }
+        }
+
+        fun test(){
+            liveData.
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
