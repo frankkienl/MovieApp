@@ -5,10 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import nl.frankkie.movieapp.model.dummy.Movie
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.movie_detail.view.*
 import nl.frankkie.movieapp.R
+import nl.frankkie.movieapp.model.MovieExtended
+import nl.frankkie.movieapp.model.viewmodel.MovieExtendedViewModel
+import nl.frankkie.movieapp.room.MovieRepository
 
 /**
  * A fragment representing a single Movie detail screen.
@@ -16,25 +22,42 @@ import nl.frankkie.movieapp.R
  * in two-pane mode (on tablets) or a [MovieDetailActivity]
  * on handsets.
  */
-class MovieDetailFragment : Fragment() {
+class MovieDetailFragment : Fragment(), LifecycleOwner {
 
     /**
      * The dummy content this fragment is presenting.
      */
-    private var item: Movie.DummyItem? = null
+    private var liveDataItem: LiveData<MovieExtended>? = null
+    private var item: MovieExtended? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
-            if (it.containsKey(ARG_ITEM_ID)) {
-                // Load the dummy content specified by the fragment
-                // arguments. In a real-world scenario, use a Loader
-                // to load content from a content provider.
-                item = Movie.ITEM_MAP[it.getString(ARG_ITEM_ID)]
-                activity?.toolbar_layout?.title = item?.content
-            }
+        //Every time you have to use !! the Kotlin compiler cries.
+        if (arguments!!.containsKey(ARG_ITEM_ID)) {
+
+            val viewModel = ViewModelProviders.of(this).get(MovieExtendedViewModel::class.java)
+
+            //get liveDataItem from repository
+            liveDataItem = MovieRepository.getMovie(
+                context!!.applicationContext,
+                arguments!!.getInt(ARG_ITEM_ID)
+            )
+            //put in viewModel
+            viewModel.movie = liveDataItem
+            viewModel.movie.observe(
+                this,
+                Observer { movieExtended -> movieExtendedUpdated(movieExtended) })
+
+            activity?.toolbar_layout?.title = liveDataItem?.value?.title
         }
+    }
+
+    private fun movieExtendedUpdated(movieExtended: MovieExtended) {
+        item = movieExtended
+
+        //refresh ui
+        fillUI(view!!)
     }
 
     override fun onCreateView(
@@ -43,17 +66,25 @@ class MovieDetailFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.movie_detail, container, false)
 
-        // Show the dummy content as text in a TextView.
-        item?.let {
-            rootView.movie_detail.text = it.details
-        }
+        //Fill ui
+        fillUI(rootView)
 
         return rootView
     }
 
+    private fun fillUI(rootView: View) {
+        if (item != null) {
+            rootView.movie_detail_title.text = item?.title
+            rootView.movie_detail_tagline.text = item?.tagline
+            rootView.movie_detail_overview.text = item?.overview
+            rootView.movie_detail_rating.text = "Rating: {item?.vote_average}"
+            rootView.movie_detail_votes.text = "Votes: {item?.votes}"
+        }
+    }
+
     companion object {
         /**
-         * The fragment argument representing the item ID that this fragment
+         * The fragment argument representing the liveDataItem ID that this fragment
          * represents.
          */
         const val ARG_ITEM_ID = "item_id"

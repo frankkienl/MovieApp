@@ -4,10 +4,13 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import nl.frankkie.movieapp.model.Movie;
+import nl.frankkie.movieapp.model.MovieExtended;
 
-@Database(entities = {Movie.class}, version = 1)
+@Database(entities = {Movie.class, MovieExtended.class}, version = 1)
 public abstract class MovieRoomDatabase extends RoomDatabase {
     public abstract MovieDao movieDao();
+    public abstract MovieExtendedDao movieExtendedDao();
 
     private static MovieRoomDatabase INSTANCE;
 

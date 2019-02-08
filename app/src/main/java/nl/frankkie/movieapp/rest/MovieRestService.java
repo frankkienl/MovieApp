@@ -1,5 +1,6 @@
 package nl.frankkie.movieapp.rest;
 
+import nl.frankkie.movieapp.model.MovieExtended;
 import nl.frankkie.movieapp.rest.response.EmptyBodyResponse;
 import nl.frankkie.movieapp.rest.response.MoviesResponse;
 import retrofit2.Call;
@@ -16,4 +17,6 @@ public interface MovieRestService {
     //?primary_release_date.gte={date_week_ago}&primary_release_date.lte={date_now}
     Call<MoviesResponse> nowPlaying(@Query("api_key") String apiKey, @Query("primary_release_date.gte") String dateWeekAgo, @Query("primary_release_date.lte") String dateNow);
 
+    @GET("/3/movie/{id}")
+    Call<MovieExtended> movie(@Query("api_key") String apiKey, @Path("id") int id);
 }

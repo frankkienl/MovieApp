@@ -2,9 +2,7 @@ package nl.frankkie.movieapp.model.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-import nl.frankkie.movieapp.room.Movie;
-import nl.frankkie.movieapp.room.MovieDao;
-import nl.frankkie.movieapp.room.MovieRoomDatabase;
+import nl.frankkie.movieapp.model.Movie;
 
 import java.util.List;
 

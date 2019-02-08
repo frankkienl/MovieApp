@@ -12,7 +12,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,7 +20,7 @@ import nl.frankkie.movieapp.Config
 import nl.frankkie.movieapp.GlideApp
 import nl.frankkie.movieapp.R
 import nl.frankkie.movieapp.model.viewmodel.MoviesViewModel
-import nl.frankkie.movieapp.room.Movie
+import nl.frankkie.movieapp.model.Movie
 import nl.frankkie.movieapp.room.MovieRepository
 
 
@@ -52,23 +51,14 @@ class MovieListActivity : AppCompatActivity(), LifecycleOwner {
         //Observe changes, to keep list up to date with Database
         moviesViewModel.movies.observe(
             this,
-            Observer { list -> adapter.submitList(list); showHideLoadingSpinner(recyclerView) })
+            Observer { list -> adapter.submitList(list) })
 
         //Set LayoutManager to Grid, use correct amount of columns
         val layoutManager = GridLayoutManager(this, calculateNoOfColumns(this))
         recyclerView.layoutManager = layoutManager
-
-        //Show a loading spinner when the list is empty
-        showHideLoadingSpinner(recyclerView) //repeat this method all at every update, see Observe
     }
 
-    private fun showHideLoadingSpinner(recyclerView: RecyclerView) {
-        if (recyclerView.adapter?.itemCount == 0) {
-            findViewById<View>(R.id.movie_list_empty).visibility = View.VISIBLE
-        } else {
-            findViewById<View>(R.id.movie_list_empty).visibility = View.GONE
-        }
-    }
+
 
     private fun calculateNoOfColumns(context: Context): Int {
         //https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
@@ -112,9 +102,9 @@ class MovieListActivity : AppCompatActivity(), LifecycleOwner {
         override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
             val item = getItem(position)
             holder.title.text = item.title
-            holder.year.text = item.release_date
+            holder.year.text = item.release_date.substring(0,4) //only year
 
-            val imageUrl = Config.BASE_URL_IMAGES + "/w154/" + item.poster_path;
+            val imageUrl = Config.BASE_URL_IMAGES + "/w300/" + item.poster_path;
             //holder.poster
             GlideApp.with(holder.poster)
                 .load(imageUrl)
@@ -128,58 +118,6 @@ class MovieListActivity : AppCompatActivity(), LifecycleOwner {
             }
         }
     }
-
-
-//    class MovieRecyclerViewAdapter(
-//        private val liveData: LiveData<List<Movie>>
-//    ) :
-//        RecyclerView.Adapter<MovieViewHolder>() {
-//
-//        private val onClickListener: View.OnClickListener
-//
-//        init {
-//            onClickListener = View.OnClickListener { v ->
-//                val item = v.tag as Movie
-//
-//                val intent = Intent(v.context, MovieDetailActivity::class.java).apply {
-//                    putExtra(MovieDetailFragment.ARG_ITEM_ID, item.id)
-//                }
-//                v.context.startActivity(intent)
-//
-//            }
-//        }
-//
-//
-//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-//            val view = LayoutInflater.from(parent.context)
-//                .inflate(R.layout.movie_list_item, parent, false)
-//            return MovieViewHolder(view)
-//        }
-//
-//        override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-//            if (liveData.value == null || liveData.value!!.isEmpty()){
-//                return
-//            }
-//            val item = liveData.value!![position]
-//            holder.title.text = item.title
-//            holder.year.text = item.release_date
-//
-//            val imageUrl = item.poster_path;
-//            //holder.poster
-//
-//            with(holder.itemView) {
-//                tag = item
-//                setOnClickListener(onClickListener)
-//            }
-//        }
-//
-//        override fun getItemCount() : Int {
-//            if (liveData.value == null){
-//                return 0
-//            }
-//            return liveData.value!!.size
-//        }
-//    }
 
     class MovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val poster: ImageView = view.findViewById(R.id.movie_list_item_poster)

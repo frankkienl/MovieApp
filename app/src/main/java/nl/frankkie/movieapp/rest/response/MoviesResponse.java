@@ -1,6 +1,6 @@
 package nl.frankkie.movieapp.rest.response;
 
-import nl.frankkie.movieapp.room.Movie;
+import nl.frankkie.movieapp.model.Movie;
 
 public class MoviesResponse {
 

@@ -1,8 +1,14 @@
-package nl.frankkie.movieapp.room;
+package nl.frankkie.movieapp.model;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+/**
+ * When you receive a list of movies,
+ * you only get a subset of the data.
+ * This is the subset.
+ * For the the full data, see MovieExtended
+ */
 @Entity
 public class Movie {
 
@@ -21,5 +27,5 @@ public class Movie {
     public boolean video;
     public double vote_average;
     public int vote_count;
-    public double populairity;
+    public double popularity;
 }
