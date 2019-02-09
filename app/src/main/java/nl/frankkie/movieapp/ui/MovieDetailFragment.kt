@@ -26,11 +26,8 @@ import nl.frankkie.movieapp.room.MovieRepository
  */
 class MovieDetailFragment : Fragment(), LifecycleOwner {
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private var liveDataItem: LiveData<MovieExtended>? = null
-    private var item: MovieExtended? = null
+    //Data binding
+    private lateinit var binding: MovieDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +35,11 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
         //Every time you have to use !! the Kotlin compiler cries.
         if (arguments!!.containsKey(ARG_ITEM_ID)) {
 
+            //Get the ViewModel, to observe the LiveData
             val viewModel = ViewModelProviders.of(this).get(MovieExtendedViewModel::class.java)
 
             //get liveDataItem from repository
-            liveDataItem = MovieRepository.getMovie(
+            val liveDataItem = MovieRepository.getMovie(
                 context!!.applicationContext,
                 arguments!!.getInt(ARG_ITEM_ID)
             )
@@ -51,45 +49,26 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
                 this,
                 Observer { movieExtended -> movieExtendedUpdated(movieExtended) })
 
-            activity?.toolbar_layout?.title = liveDataItem?.value?.title
+            activity?.toolbar_layout?.title = liveDataItem.value?.title
         }
     }
 
     private fun movieExtendedUpdated(movieExtended: MovieExtended?) {
-        item = movieExtended
-
-        //refresh ui
-        fillUI(view!!)
+        //Refresh databinding
+        binding.item = movieExtended
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //val rootView = inflater.inflate(R.layout.movie_detail, container, false)
 
-        val binding = MovieDetailBinding.inflate(inflater)
-//        val binding = DataBindingUtil.inflate<>(
-//            inflater,
-//            R.layout.movie_detail,
-//            container,
-//            false)
+        //Databinding creates the view
+        binding = MovieDetailBinding.inflate(inflater)
 
         val rootView = binding.root
-        //Fill ui
-        fillUI(rootView)
 
         return rootView
-    }
-
-    private fun fillUI(rootView: View) {
-        if (item != null) {
-            rootView.movie_detail_title.text = item?.title
-            rootView.movie_detail_tagline.text = item?.tagline
-            rootView.movie_detail_overview.text = item?.overview
-            rootView.movie_detail_rating.text = "Rating: {item?.vote_average}"
-            rootView.movie_detail_votes.text = "Votes: {item?.votes}"
-        }
     }
 
     companion object {

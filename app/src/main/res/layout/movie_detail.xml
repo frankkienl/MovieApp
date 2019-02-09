@@ -3,10 +3,9 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
-                name="model"
-                type="nl.frankkie.movieapp.model.viewmodel.MovieExtendedViewModel"
+                name="item"
+                type="nl.frankkie.movieapp.model.MovieExtended"
                 />
     </data>
 
@@ -57,7 +56,7 @@
 
         <TextView
                 android:id="@+id/movie_detail_tagline"
-                android:text="bb"
+                android:text="@{item.tagline}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
