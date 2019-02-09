@@ -13,13 +13,13 @@ public interface MovieRestService {
     @GET("/3/trending/{media_type}/{time_window}")
     Call<MoviesResponse> trending(@Path("media_type") String mediaType, @Path("time_window") String time_window, @Query("api_key") String apiKey);
 
-    @GET("/3/discover/movie")
+    @GET("/3/movie/now_playing")
     //?primary_release_date.gte={date_ago}&primary_release_date.lte={date_now}&region={region}
-    Call<MoviesResponse> nowPlaying(@Query("api_key") String apiKey, @Query("region") String region, @Query("primary_release_date.gte") String dateAgo, @Query("primary_release_date.lte") String dateNow);
+    Call<MoviesResponse> nowPlaying(@Query("api_key") String apiKey, @Query("region") String region);
 
-    @GET("/3/discover/movie")
+    @GET("/3/movie/upcoming")
         //?primary_release_date.gte={date_now}&region={region}
-    Call<MoviesResponse> upcoming(@Query("api_key") String apiKey, @Query("region") String region, @Query("primary_release_date.gte") String dateNow);
+    Call<MoviesResponse> upcoming(@Query("api_key") String apiKey, @Query("region") String region);
 
     @GET("/3/movie/{id}")
     Call<MovieExtended> movie(@Path("id") int id, @Query("api_key") String apiKey);

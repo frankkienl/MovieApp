@@ -77,15 +77,8 @@ object MovieRepository {
         val dao = MovieRoomDatabase.getDatabase(context).movieDao()
 
         prepareRestClient(context)
-
-        @SuppressLint("SimpleDateFormat")
-        val dateFormatterApi: DateFormat = SimpleDateFormat("y-M-d")
-        val now = dateFormatterApi.format(Date())
-        val weekAgo = dateFormatterApi.format(Date().time - 604800000L) // 7 * 24 * 60 * 60 * 1000
-        val monthAgo = dateFormatterApi.format(Date().time - 2592000000L) // 30 * 24 * 60 * 60 * 1000
-
         //Request from API, put in Database, let LiveData pick it up
-        restService!!.nowPlaying(apiKey, "NL", monthAgo, now)
+        restService!!.nowPlaying(apiKey, "NL")
             .enqueue(object : Callback<MoviesResponse> {
                 override fun onResponse(call: Call<MoviesResponse>, response: Response<MoviesResponse>) {
                     if (response.isSuccessful) {
@@ -116,12 +109,8 @@ object MovieRepository {
 
         prepareRestClient(context)
 
-        @SuppressLint("SimpleDateFormat")
-        val dateFormatterApi: DateFormat = SimpleDateFormat("y-M-d")
-        val now = dateFormatterApi.format(Date())
-
         //Request from API, put in Database, let LiveData pick it up
-        restService!!.upcoming(apiKey, "NL", now)
+        restService!!.upcoming(apiKey, "NL")
             .enqueue(object : Callback<MoviesResponse> {
                 override fun onResponse(call: Call<MoviesResponse>, response: Response<MoviesResponse>) {
                     if (response.isSuccessful) {
