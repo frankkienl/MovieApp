@@ -1,5 +1,6 @@
 package nl.frankkie.movieapp.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,6 +18,8 @@ import nl.frankkie.movieapp.databinding.MovieDetailBinding
 import nl.frankkie.movieapp.model.MovieExtended
 import nl.frankkie.movieapp.model.viewmodel.MovieExtendedViewModel
 import nl.frankkie.movieapp.room.MovieRepository
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 /**
  * A fragment representing a single Movie detail screen.
@@ -26,6 +29,10 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
 
     //Data binding
     private lateinit var binding: MovieDetailBinding
+
+    private val dateFormatterLocale: DateFormat = SimpleDateFormat.getDateInstance()
+    @SuppressLint("SimpleDateFormat")
+    private val dateFormatterApi: DateFormat = SimpleDateFormat("y-M-d")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +62,12 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
         if (item == null) {
             return
         }
-        //Refresh databinding
+
+        //String formatting
+        item.genres_as_string = item.genres.joinToString() //Thank you Kotlin :-)
+        item.release_date = dateFormatterLocale.format(dateFormatterApi.parse(item.release_date))
+
+        //Refresh data-binding
         binding.item = item
 
         //Refresh poster

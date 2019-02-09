@@ -1,5 +1,6 @@
 package nl.frankkie.movieapp.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -35,9 +36,17 @@ public class MovieExtended {
     public double vote_average;
     public int vote_count;
 
+    //Formatting
+    public String genres_as_string;
 
     public class Genre {
         int id;
         String name;
+
+        @NonNull
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 }

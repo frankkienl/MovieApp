@@ -11,4 +11,10 @@
     <string name="rating">Rating</string>
     <string name="votes">Votes</string>
     <string name="checkout_movie">Checkout %s ! More information: %s</string>
+    <string name="runtime">Runtime</string>
+    <string name="original_languages">Original languages</string>
+    <string name="release_date">Release date</string>
+    <string name="language">Language:</string>
+    <string name="release">Release:</string>
+    <string name="genres">Genres:</string>
 </resources>

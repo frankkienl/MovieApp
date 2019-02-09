@@ -29,15 +29,15 @@ Movie Detail
 This screen displays the detail information of a movie. 
 The information that must be available are :
 
-- Movie title
-- Movie poster
-- Running time
-- Release date
-- Original Languages
-- Genres
-- Rating score and number of votes
+- Movie title (DONE)
+- Movie poster (DONE)
+- Running time (DONE)
+- Release date (DONE)
+- Original Languages (DONE)
+- Genres (DONE)
+- Rating score and number of votes (DONE)
 - List of actor/actress (limit to 5 people) including the role name
-- Synopsis
+- Synopsis (DONE - Overview)
 - Videos/Trailers (user should be able to play the video) - if exists
 - Aside from the app, please also add unit and UI tests for at least one screen 
 (details screen or main screen) in the project to test the feature.
