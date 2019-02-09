@@ -3,6 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
                 name="item"
                 type="nl.frankkie.movieapp.model.MovieExtended"
@@ -10,11 +11,13 @@
     </data>
 
     <LinearLayout
+            android:padding="16dp"
             android:orientation="vertical"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
         <LinearLayout
+                android:layout_marginBottom="16dp"
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:layout_height="wrap_content">
@@ -23,38 +26,88 @@
                     android:id="@+id/movie_detail_poster"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:src="@drawable/no_poster"
+                    android:contentDescription="@string/movie_poster"
+                    android:adjustViewBounds="true"
                     android:layout_height="wrap_content"/>
 
-            <LinearLayout
+            <RelativeLayout
                     android:layout_weight="2"
                     android:orientation="vertical"
                     android:layout_width="0dp"
+                    android:padding="16dp"
                     android:layout_height="wrap_content">
 
                 <TextView
+                        android:layout_alignParentTop="true"
                         android:id="@+id/movie_detail_title"
                         style="?android:attr/textAppearanceLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp"
+                        android:text="@{item.title}"
+                        android:paddingBottom="8dp"
                         android:textIsSelectable="true"
                         tools:context=".ui.MovieDetailFragment"/>
 
-                <TextView
-                        android:id="@+id/movie_detail_rating"
-                        android:text="Rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                <LinearLayout
+                        android:layout_below="@id/movie_detail_title"
+                        android:layout_marginBottom="8dp"
+                        android:id="@+id/rating_and_votes"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                <TextView
-                        android:id="@+id/movie_detail_votes"
-                        android:text="Votes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-            </LinearLayout>
+                    <LinearLayout
+                            android:padding="8dp"
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                        <TextView
+                                android:id="@+id/movie_detail_rating"
+                                android:text="@{String.valueOf(item.vote_average)}"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                        <TextView
+                                android:id="@+id/movie_detail_rating_label"
+                                android:text="@string/rating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:padding="8dp"
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                        <TextView
+                                android:id="@+id/movie_detail_votes"
+                                android:text="@{String.valueOf(item.vote_count)}"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                        <TextView
+                                android:id="@+id/movie_detail_votes_label"
+                                android:text="@string/votes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.google.android.flexbox.FlexboxLayout
+                        android:layout_below="@id/rating_and_votes"
+                        android:id="@+id/movie_detail_genres_flexbox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                </com.google.android.flexbox.FlexboxLayout>
+            </RelativeLayout>
         </LinearLayout>
 
         <TextView
+                android:layout_marginBottom="16dp"
                 android:id="@+id/movie_detail_tagline"
                 android:text="@{item.tagline}"
                 android:layout_width="match_parent"
@@ -62,7 +115,7 @@
 
         <TextView
                 android:id="@+id/movie_detail_overview"
-                android:text="aa"
+                android:text="@{item.overview}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

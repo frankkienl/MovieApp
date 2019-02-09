@@ -1,17 +1,17 @@
 package nl.frankkie.movieapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_movie_detail.*
-import kotlinx.android.synthetic.main.movie_detail.view.*
+import nl.frankkie.movieapp.Config
+import nl.frankkie.movieapp.GlideApp
 import nl.frankkie.movieapp.R
 import nl.frankkie.movieapp.databinding.MovieDetailBinding
 import nl.frankkie.movieapp.model.MovieExtended
@@ -20,9 +20,7 @@ import nl.frankkie.movieapp.room.MovieRepository
 
 /**
  * A fragment representing a single Movie detail screen.
- * This fragment is either contained in a [MovieListActivity]
- * in two-pane mode (on tablets) or a [MovieDetailActivity]
- * on handsets.
+ * This fragment is contained in a [MovieDetailActivity]
  */
 class MovieDetailFragment : Fragment(), LifecycleOwner {
 
@@ -53,9 +51,21 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
         }
     }
 
-    private fun movieExtendedUpdated(movieExtended: MovieExtended?) {
+    private fun movieExtendedUpdated(item: MovieExtended?) {
+        if (item == null) {
+            return
+        }
         //Refresh databinding
-        binding.item = movieExtended
+        binding.item = item
+
+        //Refresh poster
+        val imageUrl = Config.BASE_URL_IMAGES + "/w300/" + item.poster_path;
+        //holder.poster
+        GlideApp.with(binding.movieDetailPoster)
+            .load(imageUrl)
+            .placeholder(R.drawable.no_poster)
+            .error(R.drawable.no_poster)
+            .into(binding.movieDetailPoster)
     }
 
     override fun onCreateView(
@@ -69,6 +79,15 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
         val rootView = binding.root
 
         return rootView
+    }
+
+    fun shareMovie(){
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, getText(R.string.checkout_movie).toString().format(binding.item?.title, binding.item?.homepage))
+            type = "text/plain"
+        }
+        startActivity(sendIntent)
     }
 
     companion object {

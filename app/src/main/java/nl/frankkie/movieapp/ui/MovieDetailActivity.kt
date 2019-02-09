@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import nl.frankkie.movieapp.R
 
@@ -44,4 +46,8 @@ class MovieDetailActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+
+    public fun shareMovie(view: View){
+        (supportFragmentManager.fragments[0] as MovieDetailFragment).shareMovie()
+    }
 }

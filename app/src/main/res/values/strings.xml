@@ -8,4 +8,7 @@
     <string name="movie_poster">Movie poster</string>
     <string name="title">Title</string>
     <string name="year">Year</string>
+    <string name="rating">Rating</string>
+    <string name="votes">Votes</string>
+    <string name="checkout_movie">Checkout %s ! More information: %s</string>
 </resources>
