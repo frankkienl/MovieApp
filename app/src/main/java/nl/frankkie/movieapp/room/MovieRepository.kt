@@ -1,5 +1,6 @@
 package nl.frankkie.movieapp.room
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
 import android.widget.Toast
@@ -13,6 +14,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.RuntimeException
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 object MovieRepository {
 
@@ -40,7 +44,7 @@ object MovieRepository {
     }
 
     fun getMovie(context: Context, id: Int): LiveData<MovieExtended> {
-        val dao = MovieRoomDatabase.getDatabase(context).movieExtendedDao()
+        val daoMovieExtended = MovieRoomDatabase.getDatabase(context).movieExtendedDao()
         prepareRestClient(context)
 
         //Request from API, put in Database, let LiveData pick it up
@@ -51,7 +55,7 @@ object MovieRepository {
                         val movie = response.body()
                         if (movie != null) {
                             //Separate thread
-                            MovieRepository.PersistMovieExtended(dao, movie).execute()
+                            MovieRepository.PersistMovieExtended(daoMovieExtended, movie).execute()
                         }
                     } else {
                         Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
@@ -63,7 +67,7 @@ object MovieRepository {
                 }
             })
 
-        return dao.getMovie(id)
+        return daoMovieExtended.getMovie(id)
     }
 
     fun getNowPlaying(context: Context): LiveData<List<Movie>> {
@@ -74,8 +78,82 @@ object MovieRepository {
 
         prepareRestClient(context)
 
+        @SuppressLint("SimpleDateFormat")
+        val dateFormatterApi: DateFormat = SimpleDateFormat("y-M-d")
+        val now = dateFormatterApi.format(Date())
+        val weekAgo = dateFormatterApi.format(Date().time - 604800000L) // 7 * 24 * 60 * 60 * 1000
+        val monthAgo = dateFormatterApi.format(Date().time - 2592000000L) // 30 * 24 * 60 * 60 * 1000
+
         //Request from API, put in Database, let LiveData pick it up
-        restService!!.nowPlaying(apiKey, "2019-02-01", "2019-02-07")
+        restService!!.nowPlaying(apiKey, "NL", monthAgo, now)
+            .enqueue(object : Callback<MoviesResponse> {
+                override fun onResponse(call: Call<MoviesResponse>, response: Response<MoviesResponse>) {
+                    if (response.isSuccessful) {
+                        val mr = response.body()
+                        if (mr != null) {
+                            val movies = mr.results
+                            //Separate thread
+                            PersistMovies(dao, movies).execute()
+                        }
+                    } else {
+                        Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
+                    Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        return dao.movies
+    }
+
+    fun getUpcoming(context: Context): LiveData<List<Movie>> {
+        //Here's the plan,
+        //return from database now, and queue API request.
+        //LiveData will refresh data when received
+        val dao = MovieRoomDatabase.getDatabase(context).movieDao()
+
+        prepareRestClient(context)
+
+        @SuppressLint("SimpleDateFormat")
+        val dateFormatterApi: DateFormat = SimpleDateFormat("y-M-d")
+        val now = dateFormatterApi.format(Date())
+
+        //Request from API, put in Database, let LiveData pick it up
+        restService!!.upcoming(apiKey, "NL", now)
+            .enqueue(object : Callback<MoviesResponse> {
+                override fun onResponse(call: Call<MoviesResponse>, response: Response<MoviesResponse>) {
+                    if (response.isSuccessful) {
+                        val mr = response.body()
+                        if (mr != null) {
+                            val movies = mr.results
+                            //Separate thread
+                            PersistMovies(dao, movies).execute()
+                        }
+                    } else {
+                        Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
+                    Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        return dao.movies
+    }
+
+    fun getTrending(context: Context): LiveData<List<Movie>> {
+        //Here's the plan,
+        //return from database now, and queue API request.
+        //LiveData will refresh data when received
+        val dao = MovieRoomDatabase.getDatabase(context).movieDao()
+
+        prepareRestClient(context)
+
+        //Request from API, put in Database, let LiveData pick it up
+        restService!!.trending("movie", "week", apiKey)
             .enqueue(object : Callback<MoviesResponse> {
                 override fun onResponse(call: Call<MoviesResponse>, response: Response<MoviesResponse>) {
                     if (response.isSuccessful) {

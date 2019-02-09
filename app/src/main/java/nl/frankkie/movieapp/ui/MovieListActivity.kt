@@ -6,16 +6,19 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import nl.frankkie.movieapp.Config
 import nl.frankkie.movieapp.GlideApp
 import nl.frankkie.movieapp.R
@@ -26,6 +29,10 @@ import nl.frankkie.movieapp.room.MovieRepository
 
 class MovieListActivity : AppCompatActivity(), LifecycleOwner {
 
+    val adapter: MyListAdapter = MyListAdapter()
+    lateinit var navigation: BottomNavigationView
+    lateinit var recyclerView: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initUI()
@@ -34,30 +41,54 @@ class MovieListActivity : AppCompatActivity(), LifecycleOwner {
     private fun initUI() {
         setContentView(R.layout.activity_movie_list)
 
-        val movieList = findViewById<RecyclerView>(R.id.movie_list)
-        setupRecyclerView(movieList)
+        recyclerView = findViewById(R.id.movie_list)
+        setupRecyclerView(recyclerView)
+
+        navigation = findViewById(R.id.navigation)
+        navigation.setOnNavigationItemSelectedListener { item: MenuItem -> onNavigation(item) }
+
+        setupViewModel()
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
+    private fun onNavigation(item: MenuItem): Boolean {
+        setupViewModel(item.itemId) //refresh viewModel / adapter
+        return true
+    }
+
+    private fun setupViewModel(id: Int = navigation.selectedItemId) {
         //Create ViewModel
         val moviesViewModel =
             ViewModelProviders.of(this).get(MoviesViewModel::class.java)
-        //Fill ViewModel with Movies from Repository
-        moviesViewModel.movies = MovieRepository.getNowPlaying(applicationContext)
 
-        //Create adapter for RecyclerView
-        val adapter = MyListAdapter()
-        recyclerView.adapter = adapter
+        //Fill ViewModel with Movies from Repository
+        when (id) {
+            R.id.navigation_now_playing -> moviesViewModel.movies = MovieRepository.getNowPlaying(applicationContext)
+            R.id.navigation_upcoming -> moviesViewModel.movies = MovieRepository.getUpcoming(applicationContext)
+            R.id.navigation_trending -> moviesViewModel.movies = MovieRepository.getTrending(applicationContext)
+        }
+
         //Observe changes, to keep list up to date with Database
         moviesViewModel.movies.observe(
             this,
-            Observer { list -> adapter.submitList(list) })
+            Observer { list -> updateList(list) })
+    }
 
+    private fun updateList(list: List<Movie>) {
+        adapter.submitList(list)
+
+        //Switching to a different tab somehow scrolls down
+        recyclerView.scrollToPosition(0)
+    }
+
+    private fun setupRecyclerView(recyclerView: RecyclerView) {
         //Set LayoutManager to Grid, use correct amount of columns
         val layoutManager = GridLayoutManager(this, calculateNoOfColumns(this))
         recyclerView.layoutManager = layoutManager
-    }
 
+        //Set adapter in RecyclerView
+        recyclerView.adapter = adapter
+
+    }
 
 
     private fun calculateNoOfColumns(context: Context): Int {
@@ -102,7 +133,7 @@ class MovieListActivity : AppCompatActivity(), LifecycleOwner {
         override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
             val item = getItem(position)
             holder.title.text = item.title
-            holder.year.text = item.release_date.substring(0,4) //only year
+            holder.year.text = item.release_date.substring(0, 4) //only year
 
             val imageUrl = Config.BASE_URL_IMAGES + "/w300/" + item.poster_path;
             //holder.poster
