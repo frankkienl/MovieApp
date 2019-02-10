@@ -2,8 +2,7 @@ package nl.frankkie.movieapp;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-//import androidx.test.espresso.IdlingResource;
-//import com.jakewharton.espresso.OkHttp3IdlingResource;
+import androidx.test.espresso.IdlingRegistry;
 import nl.frankkie.movieapp.rest.MovieRestService;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -13,6 +12,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
+
+//Test
+import androidx.test.espresso.IdlingResource;
+import com.jakewharton.espresso.OkHttp3IdlingResource;
 
 public class Config {
     public static final String BASE_URL = "https://api.themoviedb.org/";
@@ -78,8 +81,9 @@ public class Config {
                         builder.addInterceptor(interceptor);
                     }
                     OkHttpClient client = builder.build();
-                    //IdlingResource resource = OkHttp3IdlingResource.create("OkHttp", client);
-                    //Espresso.registerIdlingResources(resource);
+                    IdlingResource resource = OkHttp3IdlingResource.create("OkHttp", client);
+                    IdlingRegistry.getInstance().register(resource);
+
                     httpClient = client;
                 }
             }
