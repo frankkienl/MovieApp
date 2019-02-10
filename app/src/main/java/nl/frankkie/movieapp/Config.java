@@ -2,8 +2,8 @@ package nl.frankkie.movieapp;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import androidx.test.espresso.IdlingResource;
-import com.jakewharton.espresso.OkHttp3IdlingResource;
+//import androidx.test.espresso.IdlingResource;
+//import com.jakewharton.espresso.OkHttp3IdlingResource;
 import nl.frankkie.movieapp.rest.MovieRestService;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -78,7 +78,7 @@ public class Config {
                         builder.addInterceptor(interceptor);
                     }
                     OkHttpClient client = builder.build();
-                    IdlingResource resource = OkHttp3IdlingResource.create("OkHttp", client);
+                    //IdlingResource resource = OkHttp3IdlingResource.create("OkHttp", client);
                     //Espresso.registerIdlingResources(resource);
                     httpClient = client;
                 }
