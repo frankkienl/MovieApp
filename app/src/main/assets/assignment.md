@@ -36,7 +36,7 @@ The information that must be available are :
 - Original Languages (DONE)
 - Genres (DONE)
 - Rating score and number of votes (DONE)
-- List of actor/actress (limit to 5 people) including the role name
+- List of actor/actress (limit to 5 people) including the role name (DONE)
 - Synopsis (DONE - Overview)
 - Videos/Trailers (user should be able to play the video) - if exists
 - Aside from the app, please also add unit and UI tests for at least one screen 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -182,10 +183,25 @@
                 android:layout_height="wrap_content"/>
 
         <TextView
+                android:layout_marginBottom="16dp"
                 android:id="@+id/movie_detail_overview"
                 android:text="@{item.overview}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/movie_detail_cast_label"
+                android:layout_marginBottom="16dp"
+                android:text="@string/cast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/movie_detail_cast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
 </layout>

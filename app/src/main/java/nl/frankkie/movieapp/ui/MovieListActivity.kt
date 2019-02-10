@@ -42,7 +42,7 @@ class MovieListActivity : AppCompatActivity(), LifecycleOwner {
         setContentView(R.layout.activity_movie_list)
 
         recyclerView = findViewById(R.id.movie_list)
-        setupRecyclerView(recyclerView)
+        setupRecyclerView()
 
         navigation = findViewById(R.id.navigation)
         navigation.setOnNavigationItemSelectedListener { item: MenuItem -> onNavigation(item) }
@@ -80,32 +80,20 @@ class MovieListActivity : AppCompatActivity(), LifecycleOwner {
         recyclerView.scrollToPosition(0)
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
+    private fun setupRecyclerView() {
         //Set LayoutManager to Grid, use correct amount of columns
         val layoutManager = GridLayoutManager(this, calculateNoOfColumns(this))
         recyclerView.layoutManager = layoutManager
 
         //Set adapter in RecyclerView
         recyclerView.adapter = adapter
-
     }
-
 
     private fun calculateNoOfColumns(context: Context): Int {
         //https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
         val displayMetrics = context.resources.displayMetrics
         val dpWidth = displayMetrics.widthPixels / displayMetrics.density
         return (dpWidth / 180).toInt()
-    }
-
-    class MovieDiffCallback : DiffUtil.ItemCallback<Movie>() {
-        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-            return oldItem == newItem
-        }
     }
 
     class MyListAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback()) {
@@ -147,6 +135,16 @@ class MovieListActivity : AppCompatActivity(), LifecycleOwner {
                 tag = item
                 setOnClickListener(onClickListener)
             }
+        }
+    }
+
+    class MovieDiffCallback : DiffUtil.ItemCallback<Movie>() {
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+            return oldItem == newItem
         }
     }
 

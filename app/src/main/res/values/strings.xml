@@ -17,4 +17,5 @@
     <string name="language">Language:</string>
     <string name="release">Release:</string>
     <string name="genres">Genres:</string>
+    <string name="cast">Cast</string>
 </resources>

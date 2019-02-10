@@ -1,7 +1,7 @@
 package nl.frankkie.movieapp.rest;
 
 import nl.frankkie.movieapp.model.MovieExtended;
-import nl.frankkie.movieapp.rest.response.EmptyBodyResponse;
+import nl.frankkie.movieapp.rest.response.CastResponse;
 import nl.frankkie.movieapp.rest.response.MoviesResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -23,4 +23,7 @@ public interface MovieRestService {
 
     @GET("/3/movie/{id}")
     Call<MovieExtended> movie(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("/3/movie/{movie_id}/credits")
+    Call<CastResponse> cast(@Path("movie_id") int movieId, @Query("api_key") String apiKey);
 }

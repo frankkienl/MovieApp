@@ -1,22 +1,20 @@
 package nl.frankkie.movieapp.room
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import nl.frankkie.movieapp.Config
+import nl.frankkie.movieapp.model.CastMember
 import nl.frankkie.movieapp.model.Movie
 import nl.frankkie.movieapp.model.MovieExtended
 import nl.frankkie.movieapp.rest.MovieRestService
+import nl.frankkie.movieapp.rest.response.CastResponse
 import nl.frankkie.movieapp.rest.response.MoviesResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.RuntimeException
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 object MovieRepository {
 
@@ -41,6 +39,34 @@ object MovieRepository {
                 throw RuntimeException("Api key not available")
             }
         }
+    }
+
+    fun getCast(context: Context, movieId: Int): LiveData<List<CastMember>> {
+        val castDao = MovieRoomDatabase.getDatabase(context).castDao()
+        prepareRestClient(context)
+
+        //Request from API, put in Database, let LiveData pick it up
+        restService!!.cast(movieId, apiKey)
+            .enqueue(object : Callback<CastResponse> {
+                override fun onResponse(call: Call<CastResponse>, response: Response<CastResponse>) {
+                    if (response.isSuccessful) {
+                        val castResponse = response.body()
+                        if (castResponse != null) {
+                            //Separate thread
+                            val castMembers = castResponse.cast
+                            MovieRepository.PersistCast(castDao, castMembers).execute()
+                        }
+                    } else {
+                        Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<CastResponse>, t: Throwable) {
+                    Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        return castDao.cast
     }
 
     fun getMovie(context: Context, id: Int): LiveData<MovieExtended> {
@@ -182,6 +208,19 @@ object MovieRepository {
             movieDoa.deleteAll() //clear
             movieDoa.insert(movieExtended)
             return movieExtended.id
+        }
+    }
+
+    class PersistCast(private val castDao: CastDao, private val cast: Array<CastMember>) :
+        AsyncTask<Void, Void, Int>() {
+        override fun doInBackground(vararg params: Void?): Int {
+            castDao.deleteAll() //clear
+
+            val numCastMembers = Math.min(5, cast.size) //max 5 (less if less CastMembers are in this movie)
+            for (i in 0..(numCastMembers - 1)) { //Array index, prevent off-by-one error
+                castDao.insert(cast[i])
+            }
+            return numCastMembers
         }
     }
 }
