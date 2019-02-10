@@ -5,13 +5,18 @@ import androidx.room.*;
 import nl.frankkie.movieapp.model.CastMember;
 import nl.frankkie.movieapp.model.Movie;
 import nl.frankkie.movieapp.model.MovieExtended;
+import nl.frankkie.movieapp.model.Video;
 
-@Database(entities = {Movie.class, MovieExtended.class, CastMember.class}, version = 1)
+@Database(entities = {Movie.class, MovieExtended.class, CastMember.class, Video.class}, version = 1)
 @TypeConverters(MovieConverters.class)
 public abstract class MovieRoomDatabase extends RoomDatabase {
     public abstract MovieDao movieDao();
+
     public abstract MovieExtendedDao movieExtendedDao();
+
     public abstract CastDao castDao();
+
+    public abstract VideoDao videoDao();
 
     private static MovieRoomDatabase INSTANCE;
 

@@ -3,6 +3,7 @@ package nl.frankkie.movieapp.rest;
 import nl.frankkie.movieapp.model.MovieExtended;
 import nl.frankkie.movieapp.rest.response.CastResponse;
 import nl.frankkie.movieapp.rest.response.MoviesResponse;
+import nl.frankkie.movieapp.rest.response.VideosResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -14,7 +15,7 @@ public interface MovieRestService {
     Call<MoviesResponse> trending(@Path("media_type") String mediaType, @Path("time_window") String time_window, @Query("api_key") String apiKey);
 
     @GET("/3/movie/now_playing")
-    //?primary_release_date.gte={date_ago}&primary_release_date.lte={date_now}&region={region}
+        //?primary_release_date.gte={date_ago}&primary_release_date.lte={date_now}&region={region}
     Call<MoviesResponse> nowPlaying(@Query("api_key") String apiKey, @Query("region") String region);
 
     @GET("/3/movie/upcoming")
@@ -26,4 +27,7 @@ public interface MovieRestService {
 
     @GET("/3/movie/{movie_id}/credits")
     Call<CastResponse> cast(@Path("movie_id") int movieId, @Query("api_key") String apiKey);
+
+    @GET("/3/movie/{movie_id}/videos")
+    Call<VideosResponse> videos(@Path("movie_id") int movieId, @Query("api_key") String apiKey);
 }

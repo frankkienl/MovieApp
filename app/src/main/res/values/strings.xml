@@ -18,4 +18,6 @@
     <string name="release">Release:</string>
     <string name="genres">Genres:</string>
     <string name="cast">Cast</string>
+    <string name="videos">Videos</string>
+    <string name="video_thumbnail">Video thumbnail</string>
 </resources>

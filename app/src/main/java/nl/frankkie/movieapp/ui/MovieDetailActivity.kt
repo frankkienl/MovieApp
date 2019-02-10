@@ -1,6 +1,7 @@
 package nl.frankkie.movieapp.ui
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
@@ -26,7 +27,7 @@ class MovieDetailActivity : AppCompatActivity() {
                 arguments = Bundle().apply {
                     putInt(
                         MovieDetailFragment.ARG_ITEM_ID,
-                        intent.getIntExtra(MovieDetailFragment.ARG_ITEM_ID,0)
+                        intent.getIntExtra(MovieDetailFragment.ARG_ITEM_ID, 0)
                     )
                 }
             }

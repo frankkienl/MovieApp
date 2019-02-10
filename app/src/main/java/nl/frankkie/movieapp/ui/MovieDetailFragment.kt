@@ -2,6 +2,7 @@ package nl.frankkie.movieapp.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,15 +14,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.*
-import kotlinx.android.synthetic.main.activity_movie_detail.*
 import nl.frankkie.movieapp.Config
 import nl.frankkie.movieapp.GlideApp
 import nl.frankkie.movieapp.R
 import nl.frankkie.movieapp.databinding.MovieDetailBinding
 import nl.frankkie.movieapp.model.CastMember
+import nl.frankkie.movieapp.model.Movie
 import nl.frankkie.movieapp.model.MovieExtended
+import nl.frankkie.movieapp.model.Video
 import nl.frankkie.movieapp.model.viewmodel.CastViewModel
 import nl.frankkie.movieapp.model.viewmodel.MovieExtendedViewModel
+import nl.frankkie.movieapp.model.viewmodel.VideosViewModel
 import nl.frankkie.movieapp.room.MovieRepository
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -34,8 +37,10 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
 
     //Data binding
     private lateinit var binding: MovieDetailBinding
-    private lateinit var recyclerView: RecyclerView
-    val adapter: MyCastListAdapter = MyCastListAdapter()
+    private lateinit var castRecyclerView: RecyclerView
+    private lateinit var videosRecyclerView: RecyclerView
+    val castAdapter: MyCastListAdapter = MyCastListAdapter()
+    val videosAdapter: MyVideoListAdapter = MyVideoListAdapter()
 
     private val dateFormatterLocale: DateFormat = SimpleDateFormat.getDateInstance()
     @SuppressLint("SimpleDateFormat")
@@ -52,10 +57,12 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
             //Get the ViewModels, to observe the LiveData
             val movieViewModel = ViewModelProviders.of(this).get(MovieExtendedViewModel::class.java)
             val castViewModel = ViewModelProviders.of(this).get(CastViewModel::class.java)
+            val videosViewModel = ViewModelProviders.of(this).get(VideosViewModel::class.java)
 
             //get liveDataItem from repository
             val movieLiveDataItem = MovieRepository.getMovie(context!!.applicationContext, movieId)
             val castLiveData = MovieRepository.getCast(context!!.applicationContext, movieId)
+            val videosLiveDate = MovieRepository.getVideos(context!!.applicationContext, movieId)
 
             //put in viewModel (movie)
             movieViewModel.movie = movieLiveDataItem
@@ -66,8 +73,13 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
             castViewModel.cast = castLiveData
             castViewModel.cast.observe(this,
                 Observer { cast -> updateCastList(cast) })
+            //Videos
+            videosViewModel.videos = videosLiveDate
+            videosViewModel.videos.observe(
+                this,
+                Observer { videos -> updateVideosList(videos) }
+            )
 
-            activity?.toolbar_layout?.title = movieLiveDataItem.value?.title
         }
     }
 
@@ -103,32 +115,51 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
 
         val rootView = binding.root
 
-        recyclerView = binding.movieDetailCast
-        setupRecyclerView()
+        castRecyclerView = binding.movieDetailCast
+        videosRecyclerView = binding.movieDetailVideos
+        setupRecyclerViews()
 
         return rootView
     }
 
     private fun updateCastList(list: List<CastMember>) {
-        adapter.submitList(list)
+        castAdapter.submitList(list)
 
         //Scroll to start
-        recyclerView.scrollToPosition(0)
+        castRecyclerView.scrollToPosition(0)
 
-        if (list.isEmpty()){
+        if (list.isEmpty()) {
             binding.movieDetailCastLabel.visibility = View.GONE
         } else {
             binding.movieDetailCastLabel.visibility = View.VISIBLE
         }
     }
 
-    private fun setupRecyclerView() {
-        //Set LayoutManager to Grid, use correct amount of columns
-        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.layoutManager = layoutManager
+    private fun updateVideosList(list: List<Video>) {
+        videosAdapter.submitList(list)
 
-        //Set adapter in RecyclerView
-        recyclerView.adapter = adapter
+        //Scroll to start
+        videosRecyclerView.scrollToPosition(0)
+
+        if (list.isEmpty()) {
+            binding.movieDetailVideosLabel.visibility = View.GONE
+        } else {
+            binding.movieDetailVideosLabel.visibility = View.VISIBLE
+        }
+    }
+
+    private fun setupRecyclerViews() {
+        //Set LayoutManager to Horizontal LinearLayout (Cast)
+        val horizontalLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        castRecyclerView.layoutManager = horizontalLayoutManager
+
+        //Videos
+        val verticalLayoutManager = LinearLayoutManager(context)
+        videosRecyclerView.layoutManager = verticalLayoutManager
+
+        //Set castAdapter in RecyclerView
+        castRecyclerView.adapter = castAdapter
+        videosRecyclerView.adapter = videosAdapter
     }
 
     fun shareMovie() {
@@ -181,6 +212,66 @@ class MovieDetailFragment : Fragment(), LifecycleOwner {
         val photo: ImageView = view.findViewById(R.id.cast_photo)
         val name: TextView = view.findViewById(R.id.cast_name)
         val role: TextView = view.findViewById(R.id.cast_role)
+    }
+
+
+    class MyVideoListAdapter : ListAdapter<Video, VideoViewHolder>(VideoDiffCallback()) {
+
+        private val onClickListener: View.OnClickListener
+
+        init {
+            onClickListener = View.OnClickListener { v ->
+                val item = v.tag as Video
+
+                //YouTube intent
+                val intent = Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://www.youtube.com/watch?v=" + item.key))
+
+                v.context.startActivity(intent)
+
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.video, parent, false)
+            return VideoViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
+            val item = getItem(position)
+            holder.title.text = item.name
+
+            val imageUrl = Config.BASE_URL_IMAGE_YT.format(item.key)
+            //holder.poster
+            GlideApp.with(holder.thumbnail)
+                .load(imageUrl)
+                .placeholder(R.drawable.no_poster)
+                .error(R.drawable.no_poster)
+                .into(holder.thumbnail)
+
+            if (item.site == "YouTube") {
+                with(holder.itemView) {
+                    tag = item
+                    setOnClickListener(onClickListener)
+                }
+            }
+        }
+    }
+
+    class VideoDiffCallback : DiffUtil.ItemCallback<Video>() {
+        override fun areItemsTheSame(oldItem: Video, newItem: Video): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Video, newItem: Video): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    class VideoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val thumbnail: ImageView = view.findViewById(R.id.video_thumbnail)
+        val title: TextView = view.findViewById(R.id.video_title)
     }
 
     companion object {

@@ -17,6 +17,7 @@ import java.util.Scanner;
 public class Config {
     public static final String BASE_URL = "https://api.themoviedb.org/";
     public static final String BASE_URL_IMAGES = "https://image.tmdb.org/t/p/";
+    public static final String BASE_URL_IMAGE_YT = "https://img.youtube.com/vi/%s/hqdefault.jpg";
 
     private static MovieRestService restService;
     private static OkHttpClient httpClient;

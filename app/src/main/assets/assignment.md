@@ -38,7 +38,7 @@ The information that must be available are :
 - Rating score and number of votes (DONE)
 - List of actor/actress (limit to 5 people) including the role name (DONE)
 - Synopsis (DONE - Overview)
-- Videos/Trailers (user should be able to play the video) - if exists (WIP)
+- Videos/Trailers (user should be able to play the video) - if exists (DONE)
 - Aside from the app, please also add unit and UI tests for at least one screen 
 (details screen or main screen) in the project to test the feature.
 

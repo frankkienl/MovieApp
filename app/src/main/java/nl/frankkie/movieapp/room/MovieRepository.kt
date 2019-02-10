@@ -8,9 +8,11 @@ import nl.frankkie.movieapp.Config
 import nl.frankkie.movieapp.model.CastMember
 import nl.frankkie.movieapp.model.Movie
 import nl.frankkie.movieapp.model.MovieExtended
+import nl.frankkie.movieapp.model.Video
 import nl.frankkie.movieapp.rest.MovieRestService
 import nl.frankkie.movieapp.rest.response.CastResponse
 import nl.frankkie.movieapp.rest.response.MoviesResponse
+import nl.frankkie.movieapp.rest.response.VideosResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -67,6 +69,34 @@ object MovieRepository {
             })
 
         return castDao.cast
+    }
+
+    fun getVideos(context: Context, movieId: Int): LiveData<List<Video>> {
+        val videoDao = MovieRoomDatabase.getDatabase(context).videoDao()
+        prepareRestClient(context)
+
+        //Request from API, put in Database, let LiveData pick it up
+        restService!!.videos(movieId, apiKey)
+            .enqueue(object : Callback<VideosResponse> {
+                override fun onResponse(call: Call<VideosResponse>, response: Response<VideosResponse>) {
+                    if (response.isSuccessful) {
+                        val videosResponse = response.body()
+                        if (videosResponse != null) {
+                            //Separate thread
+                            val videos = videosResponse.results
+                            MovieRepository.PersistVideos(videoDao, videos).execute()
+                        }
+                    } else {
+                        Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<VideosResponse>, t: Throwable) {
+                    Toast.makeText(context, "Network request failed", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        return videoDao.videos
     }
 
     fun getMovie(context: Context, id: Int): LiveData<MovieExtended> {
@@ -221,6 +251,17 @@ object MovieRepository {
                 castDao.insert(cast[i])
             }
             return numCastMembers
+        }
+    }
+
+    class PersistVideos(private val videoDao: VideoDao, private val videos: Array<Video>) :
+        AsyncTask<Void, Void, Int>() {
+        override fun doInBackground(vararg params: Void?): Int {
+            videoDao.deleteAll() //clear
+            for (video in videos) {
+                videoDao.insert(video)
+            }
+            return videos.size
         }
     }
 }
